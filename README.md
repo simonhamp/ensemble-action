@@ -1,6 +1,6 @@
 # Ensemble Dependency Sync Action
 
-Automatically sync your PHP/Composer dependencies to [Ensemble](https://ensemble.dev) for monitoring updates, security vulnerabilities, and license changes.
+Automatically sync your PHP/Composer dependencies to [Ensemble](https://ensemble.laravel.cloud) for monitoring updates, security vulnerabilities, and license changes.
 
 ## Usage
 
