@@ -1,0 +1,62 @@
+name: 'Ensemble Dependency Sync'
+description: 'Sync your Composer dependencies to Ensemble for monitoring updates, security vulnerabilities, and license changes'
+author: 'Simon Hamp'
+
+branding:
+  icon: 'package'
+  color: 'purple'
+
+inputs:
+  api-key:
+    description: 'Your Ensemble API key'
+    required: true
+  ensemble-url:
+    description: 'Your Ensemble instance URL'
+    required: false
+    default: 'https://ensemble.dev'
+  php-version:
+    description: 'PHP version to use'
+    required: false
+    default: '8.2'
+  working-directory:
+    description: 'Directory containing composer.json'
+    required: false
+    default: '.'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ inputs.php-version }}
+        tools: composer
+
+    - name: Install dependencies
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: composer install --no-dev --no-interaction --prefer-dist --no-progress
+
+    - name: Gather dependency information
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        composer outdated --direct --format=json > /tmp/outdated.json 2>/dev/null || echo '{"installed":[]}' > /tmp/outdated.json
+        composer licenses --format=json > /tmp/licenses.json 2>/dev/null || echo '{"dependencies":{}}' > /tmp/licenses.json
+
+    - name: Sync to Ensemble
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      env:
+        ENSEMBLE_API_KEY: ${{ inputs.api-key }}
+        ENSEMBLE_URL: ${{ inputs.ensemble-url }}
+      run: |
+        jq -n \
+          --slurpfile outdated /tmp/outdated.json \
+          --slurpfile licenses /tmp/licenses.json \
+          --slurpfile lock composer.lock \
+          '{outdated: $outdated[0], licenses: $licenses[0], lock: $lock[0]}' \
+        | curl -sf -X POST "${ENSEMBLE_URL}/api/sync" \
+          -H "Authorization: Bearer ${ENSEMBLE_API_KEY}" \
+          -H "Content-Type: application/json" \
+          -d @-
