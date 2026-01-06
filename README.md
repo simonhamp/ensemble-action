@@ -31,13 +31,13 @@ jobs:
 | Input | Description | Required | Default |
 |-------|-------------|----------|---------|
 | `api-key` | Your Ensemble API key | Yes | - |
-| `ensemble-url` | Your Ensemble instance URL | No | `https://ensemble.dev` |
+| `ensemble-url` | Your Ensemble instance URL | No | `https://ensemble.laravel.cloud` |
 | `php-version` | PHP version to use | No | `8.2` |
 | `working-directory` | Directory containing composer.json | No | `.` |
 
 ## Setup
 
-1. Sign up at [Ensemble](https://ensemble.dev) and create an app
+1. Sign up at [Ensemble](https://ensemble.laravel.cloud) and create an app
 2. Copy your API key from the app settings
 3. Add `ENSEMBLE_API_KEY` as a secret in your GitHub repository settings
 4. Add the workflow file to your repository

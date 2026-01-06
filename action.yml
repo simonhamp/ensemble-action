@@ -13,7 +13,7 @@ inputs:
   ensemble-url:
     description: 'Your Ensemble instance URL'
     required: false
-    default: 'https://ensemble.dev'
+    default: 'https://ensemble.laravel.cloud'
   php-version:
     description: 'PHP version to use'
     required: false
